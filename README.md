@@ -44,15 +44,57 @@
 
 | Plik | Do czego służy |
 |---|---|
-| `index.html` | Cała aplikacja (HTML + Tailwind CSS z CDN + JavaScript) |
+| `index.html` | Treść strony (HTML) z polityką bezpieczeństwa treści (CSP) |
+| `assets/app.js` | Cała logika kalkulatora i **konfiguracja `CONFIG`** |
+| `assets/app.css` | Skompilowany Tailwind CSS 4.3.3 + style strony |
+| `assets/vendor/` | Lokalne kopie pdfmake 0.2.23 i czcionek Roboto (bez CDN) |
+| `src/input.css` | Źródło arkusza stylów (potrzebne tylko do przebudowy CSS) |
+| `_headers` | Nagłówki bezpieczeństwa dla Cloudflare Pages |
 | `favicon.svg` | Ikona strony |
 | `og-image.png` | Obrazek podglądu przy udostępnianiu linku (1200×630) |
 | `robots.txt`, `sitemap.xml` | Pliki dla Google – wpisz w nich swoją domenę |
 | `.nojekyll` | Każe GitHub Pages pokazać pliki bez przetwarzania |
 
+### Bezpieczeństwo
+
+- **Brak kodu z zewnętrznych serwerów.**
+  - Tailwind jest skompilowany do `assets/app.css`, a pdfmake leży w `assets/vendor/`.
+  - Włamanie do CDN nie może podmienić linku partnerskiego ani przechwycić danych z formularza.
+- **Content-Security-Policy** (w `index.html` i `_headers`):
+  - przeglądarka uruchamia tylko skrypty i style z tej domeny;
+  - dane mogą trafić wyłącznie do `api.nbp.pl` i `formspree.io`;
+  - wstrzyknięty skrypt (XSS) nie zostanie wykonany.
+- **Nagłówki w `_headers`** (Cloudflare Pages):
+  - HSTS,
+  - zakaz osadzania strony w ramce (ochrona przed clickjackingiem),
+  - `nosniff`, `Referrer-Policy`, `Permissions-Policy`.
+- **Walidacja odpowiedzi API NBP:**
+  - akceptowane są tylko liczby, daty ISO i numery tabel w formacie `123/A/NBP/2026`;
+  - wszystkie dane wstawiane do strony są escapowane.
+- **Formularz zapytań:**
+  - ukryte pole-pułapka,
+  - blokada wysłania szybciej niż 3 s po otwarciu strony,
+  - limit 1 zapytania na minutę i 3 na wizytę,
+  - limity długości pól, usuwanie znaków sterujących,
+  - zapis daty zgody (RODO).
+- **Link partnerski i adres formularza:** akceptowany jest wyłącznie protokół `https://`. VIN trafia do linku dopiero po walidacji (17 znaków, bez I/O/Q).
+- **Limity wartości:** kwoty do 100 mln, pojemność do 20 000 cm³, kurs ręczny do 1000.
+- **Brak cookies, brak analityki, brak sekretów w kodzie.** `CONFIG` jest publiczny z założenia – nigdy nie wpisuj tam haseł ani kluczy API.
+
+### Przebudowa CSS (tylko po zmianie klas)
+
+Zmiana tekstów, kwot i `CONFIG` **nie wymaga** przebudowy. Jeśli dodasz nowe klasy Tailwind w `index.html` lub `assets/app.js`, uruchom:
+
+```bash
+npm install --no-save tailwindcss@4.3.3 @tailwindcss/cli@4.3.3
+npx tailwindcss -i src/input.css -o assets/app.css --minify
+```
+
+Licencje bibliotek dołączonych do projektu: `assets/vendor/THIRD-PARTY-LICENSES.txt`.
+
 ### Konfiguracja (5 minut)
 
-Otwórz `index.html` i znajdź blok `const CONFIG = {` (na początku skryptu, na dole pliku):
+Otwórz `assets/app.js` i znajdź blok `const CONFIG = {` (na samej górze pliku):
 
 ```js
 affiliate: {
@@ -72,9 +114,11 @@ owner: {
 
 Po kupnie domeny zamień `https://TWOJA-DOMENA.pl` na swój adres w plikach `index.html`, `robots.txt` i `sitemap.xml`. W `robots.txt` usuń też znak `#` przed linią `Sitemap:`.
 
+Jeśli zamiast Formspree użyjesz innego dostawcy formularza, dopisz jego domenę w `connect-src` i `form-action`. Zrób to w dwóch miejscach: w znaczniku `Content-Security-Policy` w `index.html` i w pliku `_headers`. Bez tego przeglądarka zablokuje wysyłkę.
+
 ### Uruchomienie lokalne
 
-Kliknij dwukrotnie `index.html` albo uruchom serwer:
+Uruchom serwer (przy otwarciu pliku dwuklikiem przeglądarka może blokować skrypty):
 
 ```bash
 python3 -m http.server 8000
@@ -109,7 +153,15 @@ python3 -m http.server 8000
 
 ## English summary (EN)
 
-**What it is.** A single-page web app (`index.html`). It uses Tailwind CSS from a CDN, vanilla JavaScript, and pdfmake, which loads only when a PDF is requested. It needs no backend and no build step, so any static host works (GitHub Pages, Cloudflare Pages, Netlify).
+**What it is.** A static single-page web app: `index.html`, `assets/app.js`, `assets/app.css`, plus self-hosted pdfmake in `assets/vendor/`. pdfmake loads only when a PDF is requested. It needs no backend, and nothing is fetched from third-party CDNs. Any static host works (Cloudflare Pages recommended, GitHub Pages for previews).
+
+**Security.**
+- A strict Content-Security-Policy: `script-src 'self'`, `style-src 'self'`, and `connect-src` limited to `api.nbp.pl` and `formspree.io`.
+- Security headers in `_headers` (HSTS, `frame-ancestors 'none'`, `nosniff`).
+- Strict validation of NBP API responses, and HTML escaping of all rendered values.
+- HTTPS-only affiliate and form URLs.
+- Lead-form anti-spam: honeypot, time-trap and rate limits.
+- No cookies and no secrets in client code.
 
 **Key logic**
 
@@ -130,6 +182,6 @@ python3 -m http.server 8000
   - When cleared in Germany: German import VAT = 19% × (customs value + duty), and the Polish excise goes on form AKC-U/S.
 - **Deadlines.** File AKC-U/S within 14 days and pay within 30 days. A deadline that falls on a Saturday, Sunday or holiday moves to the next working day.
 
-**Configuration.** Edit the `CONFIG` object in `index.html`: your carVertical affiliate link, the Formspree endpoint, email or phone for leads, and the data-controller details for the privacy policy. After you buy a domain, replace `https://TWOJA-DOMENA.pl` in `index.html`, `robots.txt` and `sitemap.xml`.
+**Configuration.** Edit the `CONFIG` object at the top of `assets/app.js`: your carVertical affiliate link, the Formspree endpoint, email or phone for leads, and the data-controller details for the privacy policy. After you buy a domain, replace `https://TWOJA-DOMENA.pl` in `index.html`, `robots.txt` and `sitemap.xml`.
 
 **Disclaimer.** For information only; this is not tax advice.

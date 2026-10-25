@@ -2,6 +2,10 @@
 <html lang="pl">
 <head>
 <meta charset="utf-8">
+<!-- Bezpieczeństwo: przeglądarka uruchomi wyłącznie skrypty i style z tej domeny, a dane wyśle tylko do API NBP i Formspree.
+     Zmiana dostawcy formularza wymaga dopisania jego domeny w connect-src (tutaj i w pliku _headers). -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.nbp.pl https://formspree.io; form-action 'self' https://formspree.io; base-uri 'none'; manifest-src 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kalkulator Akcyzy 2026 z kursem NBP z dnia wjazdu | AKC-U/S, import z UE i USA</title>
 <meta name="description" content="Darmowy kalkulator akcyzy za samochód 2026: automatyczny kurs średni NBP z dnia wjazdu (art. 104 ust. 12–13), stawki 0–18,6%, cło i VAT dla aut z USA, terminy AKC-U/S i kosztorys PDF.">
@@ -21,62 +25,8 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://api.nbp.pl" crossorigin>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3/dist/index.global.js"></script>
-<style>
-  :root { color-scheme: light; }
-  html { scroll-behavior: smooth; }
-  body { margin: 0; background: #f8fafc; color: #0f172a; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
-  [hidden] { display: none !important; }
-  .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 1rem; box-shadow: 0 1px 2px rgba(15, 23, 42, .04); }
-  .lbl { display: block; font-size: .875rem; font-weight: 600; color: #334155; margin-bottom: .35rem; }
-  .hint { font-size: .78rem; line-height: 1.35; color: #64748b; margin-top: .35rem; }
-  .inp { width: 100%; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: .65rem; padding: .62rem .75rem; font-size: 1rem; background: #fff; color: #0f172a; font-family: inherit; }
-  .inp:focus { outline: 2px solid #14b8a6; outline-offset: 1px; border-color: #14b8a6; }
-  .inp[aria-invalid="true"] { border-color: #dc2626; }
-  .suffix { position: relative; }
-  .suffix > .inp { padding-right: 3.6rem; }
-  .suffix > span { position: absolute; right: .75rem; top: 50%; transform: translateY(-50%); font-size: .85rem; font-weight: 600; color: #64748b; pointer-events: none; }
-  .opt { display: flex; gap: .7rem; align-items: flex-start; border: 1.5px solid #e2e8f0; border-radius: .8rem; padding: .75rem .85rem; cursor: pointer; background: #fff; transition: border-color .15s, background .15s; }
-  .opt:hover { border-color: #94a3b8; }
-  .opt:has(input:checked) { border-color: #0f766e; background: #f0fdfa; }
-  .opt input { margin-top: .2rem; accent-color: #0f766e; width: 1.05rem; height: 1.05rem; flex: none; }
-  .chk { display: flex; gap: .6rem; align-items: flex-start; cursor: pointer; }
-  .chk input { margin-top: .2rem; accent-color: #0f766e; width: 1.05rem; height: 1.05rem; flex: none; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; border-radius: .7rem; padding: .75rem 1.1rem; font-weight: 700; font-size: .98rem; cursor: pointer; border: 0; text-decoration: none; font-family: inherit; }
-  .btn-primary { background: #0f766e; color: #fff; }
-  .btn-primary:hover { background: #115e59; }
-  .btn-cv { background: #1d4ed8; color: #fff; }
-  .btn-cv:hover { background: #1e40af; }
-  .btn-ghost { background: #fff; color: #0f172a; border: 1px solid #cbd5e1; }
-  .btn-ghost:hover { background: #f1f5f9; }
-  .btn[disabled] { opacity: .6; cursor: progress; }
-  .copy { border: 1px solid #cbd5e1; background: #fff; border-radius: .45rem; font-size: .72rem; font-weight: 600; padding: .15rem .45rem; color: #334155; cursor: pointer; white-space: nowrap; }
-  .copy:hover { background: #f1f5f9; }
-  .tbl { width: 100%; border-collapse: collapse; font-size: .9rem; }
-  .tbl td, .tbl th { padding: .5rem .25rem; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
-  .tbl th { text-align: left; color: #475569; font-weight: 600; font-size: .8rem; }
-  .tbl td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
-  .tbl tr.sum td { border-top: 2px solid #0f172a; border-bottom: 0; font-weight: 800; font-size: 1rem; padding-top: .7rem; }
-  .tbl tr.sub td { color: #64748b; font-size: .82rem; }
-  .tbl tr.cur td { background: #f0fdfa; }
-  .prose-pl h2 { font-size: 1.45rem; font-weight: 800; margin: 0 0 .75rem; color: #0f172a; }
-  .prose-pl h3 { font-size: 1.1rem; font-weight: 700; margin: 1.2rem 0 .4rem; }
-  .prose-pl p, .prose-pl li { line-height: 1.65; color: #334155; }
-  .prose-pl ul { padding-left: 1.2rem; list-style: disc; }
-  .prose-pl ol { padding-left: 1.2rem; list-style: decimal; }
-  .prose-pl a { color: #0f766e; text-decoration: underline; }
-  details.faq { border: 1px solid #e2e8f0; border-radius: .8rem; background: #fff; padding: .2rem 1rem; }
-  details.faq + details.faq { margin-top: .6rem; }
-  details.faq summary { cursor: pointer; font-weight: 700; padding: .75rem 0; list-style: none; }
-  details.faq summary::-webkit-details-marker { display: none; }
-  details.faq summary::after { content: "+"; float: right; color: #0f766e; font-weight: 800; }
-  details.faq[open] summary::after { content: "–"; }
-  .spin { width: 1rem; height: 1rem; border: 2px solid #99f6e4; border-top-color: #0f766e; border-radius: 50%; animation: sp 0.8s linear infinite; display: inline-block; vertical-align: -2px; }
-  @keyframes sp { to { transform: rotate(360deg); } }
-  @media (max-width: 1023px) { body { padding-bottom: 4.5rem; } }
-  @media print { #mbar, header nav, .no-print { display: none !important; } }
-</style>
+<link rel="stylesheet" href="assets/app.css">
+<script src="assets/app.js" defer></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -128,7 +78,7 @@
 </script>
 </head>
 <body>
-<noscript><div style="background:#fef3c7;padding:12px;text-align:center">Kalkulator wymaga włączonej obsługi JavaScript.</div></noscript>
+<noscript><div class="noscript-msg">Kalkulator wymaga włączonej obsługi JavaScript.</div></noscript>
 
 <header class="bg-white border-b border-slate-200">
   <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
@@ -213,7 +163,7 @@
         <div class="grid sm:grid-cols-2 gap-4">
           <div>
             <label class="lbl" for="price">Cena zakupu z umowy / faktury</label>
-            <div class="suffix"><input id="price" class="inp" inputmode="decimal" placeholder="np. 12 500" value="12500"><span data-cur>EUR</span></div>
+            <div class="suffix"><input id="price" class="inp" inputmode="decimal" placeholder="np. 12 500" value="12500" maxlength="20"><span data-cur>EUR</span></div>
             <p class="hint" data-show="eu">Kwota, którą faktycznie płacisz za auto. Transport opłacany osobno nie wchodzi do podstawy akcyzy.</p>
             <p class="hint" data-show="noneu" hidden>Cena z aukcji lub faktury sprzedawcy.</p>
           </div>
@@ -226,12 +176,12 @@
         <div data-show="noneu" hidden class="grid sm:grid-cols-2 gap-4 mt-4">
           <div>
             <label class="lbl" for="transportBorder">Koszty do granicy UE</label>
-            <div class="suffix"><input id="transportBorder" class="inp" inputmode="decimal" placeholder="np. 2 400" value="2400"><span data-cur>USD</span></div>
+            <div class="suffix"><input id="transportBorder" class="inp" inputmode="decimal" placeholder="np. 2 400" value="2400" maxlength="20"><span data-cur>USD</span></div>
             <p class="hint">Opłaty aukcyjne, transport lądowy, fracht morski i ubezpieczenie do portu w UE. Wchodzą do wartości celnej.</p>
           </div>
           <div>
             <label class="lbl" for="postBorder">Koszty od portu UE do miejsca przeznaczenia</label>
-            <div class="suffix"><input id="postBorder" class="inp" inputmode="decimal" placeholder="0" value="0"><span>PLN</span></div>
+            <div class="suffix"><input id="postBorder" class="inp" inputmode="decimal" placeholder="0" value="0" maxlength="20"><span>PLN</span></div>
             <p class="hint">Rozładunek i transport z portu. Nie wchodzą do wartości celnej ani podstawy akcyzy, ale zwiększają podstawę VAT importowego.</p>
           </div>
         </div>
@@ -261,7 +211,7 @@
           </div>
           <div id="ccWrap">
             <label class="lbl" for="cc">Pojemność silnika (pole P.1 dowodu)</label>
-            <div class="suffix"><input id="cc" class="inp" inputmode="numeric" placeholder="np. 1998" value="1998"><span>cm³</span></div>
+            <div class="suffix"><input id="cc" class="inp" inputmode="numeric" placeholder="np. 1998" value="1998" maxlength="6"><span>cm³</span></div>
             <p class="hint">Próg 2000 cm³ decyduje o stawce – sprawdź pole P.1 w zagranicznym dowodzie rejestracyjnym.</p>
           </div>
           <div class="sm:col-span-2" data-show="eu">
@@ -291,7 +241,7 @@
           <label class="chk"><input type="checkbox" id="manualRateToggle"><span class="text-sm">Wpisz kurs ręcznie (np. brak internetu albo kurs z dokumentu celnego)</span></label>
           <div id="manualRateWrap" class="mt-2 max-w-xs" hidden>
             <label class="lbl" for="manualRate">Kurs ręczny (zł za 1 jednostkę waluty)</label>
-            <input id="manualRate" class="inp" inputmode="decimal" placeholder="np. 4,2512">
+            <input id="manualRate" class="inp" inputmode="decimal" placeholder="np. 4,2512" maxlength="12">
           </div>
         </div>
       </fieldset>
@@ -304,7 +254,7 @@
           <div class="grid sm:grid-cols-[1fr_10rem] gap-3 items-start">
             <label class="chk"><input type="checkbox" id="regOn" checked>
               <span class="text-sm"><b>Rejestracja w wydziale komunikacji</b><span class="block text-slate-500">Dowód 54 zł + tablice 80 zł + pozwolenie czasowe 13,50 zł + nalepka 12,50 zł = 160 zł (urząd może doliczyć opłaty ewidencyjne).</span></span></label>
-            <div class="suffix"><input id="regAmount" class="inp" inputmode="decimal" value="160,00" aria-label="Opłata rejestracyjna"><span>zł</span></div>
+            <div class="suffix"><input id="regAmount" class="inp" inputmode="decimal" value="160,00" maxlength="20" aria-label="Opłata rejestracyjna"><span>zł</span></div>
           </div>
           <label class="chk"><input type="checkbox" id="customPlates"><span class="text-sm"><b>Tablice indywidualne</b> – dopłata 920 zł (1000 zł zamiast 80 zł).</span></label>
           <div>
@@ -315,25 +265,25 @@
           <div class="grid sm:grid-cols-[1fr_10rem] gap-3 items-start">
             <label class="chk"><input type="checkbox" id="transOn" checked>
               <span class="text-sm"><b>Tłumaczenie przysięgłe</b><span class="block text-slate-500">Odznacz, jeśli umowa jest dwujęzyczna, a wydział nie wymaga tłumaczenia dowodu z UE – potwierdź to w swoim urzędzie.</span></span></label>
-            <div class="suffix"><input id="transAmount" class="inp" inputmode="decimal" value="200,00" aria-label="Koszt tłumaczenia"><span>zł</span></div>
+            <div class="suffix"><input id="transAmount" class="inp" inputmode="decimal" value="200,00" maxlength="20" aria-label="Koszt tłumaczenia"><span>zł</span></div>
           </div>
           <div class="grid sm:grid-cols-2 gap-4">
             <div data-show="eu">
               <label class="lbl" for="exportPlates">Tablice wywozowe z ubezpieczeniem (np. Ausfuhrkennzeichen)</label>
-              <div class="suffix"><input id="exportPlates" class="inp" inputmode="decimal" placeholder="np. 100" value="0"><span>EUR</span></div>
+              <div class="suffix"><input id="exportPlates" class="inp" inputmode="decimal" placeholder="np. 100" value="0" maxlength="20"><span>EUR</span></div>
               <p class="hint">Niemieckie tablice krótkoterminowe kosztują zwykle ok. 80–120 EUR za 14 dni, zależnie od ubezpieczyciela.</p>
             </div>
             <div data-show="eu">
               <label class="lbl" for="transportPL">Transport do Polski (laweta, paliwo)</label>
-              <div class="suffix"><input id="transportPL" class="inp" inputmode="decimal" placeholder="0" value="0"><span>PLN</span></div>
+              <div class="suffix"><input id="transportPL" class="inp" inputmode="decimal" placeholder="0" value="0" maxlength="20"><span>PLN</span></div>
             </div>
             <div data-show="noneu" hidden>
               <label class="lbl" for="agency">Agencja celna, spedycja, opłaty portowe</label>
-              <div class="suffix"><input id="agency" class="inp" inputmode="decimal" placeholder="0" value="0"><span>PLN</span></div>
+              <div class="suffix"><input id="agency" class="inp" inputmode="decimal" placeholder="0" value="0" maxlength="20"><span>PLN</span></div>
             </div>
             <div>
               <label class="lbl" for="otherCosts">Inne koszty (naprawy, OC na dojazd)</label>
-              <div class="suffix"><input id="otherCosts" class="inp" inputmode="decimal" placeholder="0" value="0"><span>PLN</span></div>
+              <div class="suffix"><input id="otherCosts" class="inp" inputmode="decimal" placeholder="0" value="0" maxlength="20"><span>PLN</span></div>
             </div>
           </div>
         </div>
@@ -437,9 +387,9 @@
             <div><label class="lbl" for="leadCity">Miasto</label><input id="leadCity" name="miasto" class="inp" maxlength="60" value="Łódź" autocomplete="address-level2"></div>
           </div>
           <div><label class="lbl" for="leadMsgText">Wiadomość</label><textarea id="leadMsgText" name="wiadomosc" class="inp" rows="2" maxlength="600" placeholder="np. Auto z Niemiec, wjazd w przyszłym tygodniu"></textarea></div>
-          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp">
           <label class="chk"><input type="checkbox" id="leadAttach" checked><span class="text-sm">Dołącz wynik kalkulacji do zapytania</span></label>
-          <label class="chk"><input type="checkbox" id="leadConsent" required><span class="text-xs text-slate-600">Wyrażam zgodę na przetwarzanie moich danych w celu odpowiedzi na zapytanie i przygotowania oferty, w tym na przekazanie ich współpracującej agencji rejestracyjnej lub celnej. Szczegóły w <a class="underline" href="#prywatnosc">polityce prywatności</a>.</span></label>
+          <label class="chk"><input type="checkbox" id="leadConsent" required><span class="text-xs text-slate-600">Wyrażam zgodę na przetwarzanie moich danych w celu odpowiedzi na zapytanie i przygotowania oferty, w tym na przekazanie ich współpracującej agencji rejestracyjnej lub celnej. Szczegóły w <a class="underline" href="#prywatnosc">polityce prywatności</a> i <a class="underline" href="#regulamin">regulaminie</a>.</span></label>
           <div class="flex flex-wrap gap-2">
             <button type="submit" class="btn btn-primary flex-1">Wyślij zapytanie</button>
             <a id="leadPhoneBtn" class="btn btn-ghost" href="#" hidden>Zadzwoń</a>
@@ -519,11 +469,25 @@
       <h2>Polityka prywatności</h2>
       <ol>
         <li>Administratorem danych jest <span data-owner="name"></span>, kontakt: <span data-owner="email"></span>.</li>
-        <li>Kalkulator działa w Twojej przeglądarce. Wpisane kwoty, daty i numer VIN nie są wysyłane na nasz serwer. Aby pobrać kurs, przeglądarka łączy się bezpośrednio z publicznym API Narodowego Banku Polskiego (api.nbp.pl) – przekazywane są tylko kod waluty i data. Biblioteki strony (Tailwind CSS, pdfmake) są pobierane z serwisu jsDelivr.</li>
-        <li>Strona nie zapisuje plików cookies i nie używa narzędzi analitycznych.</li>
-        <li>Dane z formularza kontaktowego (imię, telefon, e-mail, miasto, wiadomość i – jeśli zaznaczysz – wynik kalkulacji) przetwarzamy, aby odpowiedzieć na zapytanie i przygotować ofertę: na podstawie Twojej zgody (art. 6 ust. 1 lit. a RODO) oraz działań przed zawarciem umowy (art. 6 ust. 1 lit. b RODO). Odbiorcami mogą być dostawca obsługi formularza lub poczty e-mail oraz współpracująca agencja rejestracyjna lub celna. Dane przechowujemy do zakończenia sprawy, nie dłużej niż 12 miesięcy od ostatniego kontaktu.</li>
+        <li>Kalkulator działa w Twojej przeglądarce. Wpisane kwoty, daty i numer VIN nie są wysyłane na nasz serwer. Aby pobrać kurs, przeglądarka łączy się bezpośrednio z publicznym API Narodowego Banku Polskiego (api.nbp.pl) – przekazywane są tylko kod waluty i data. Wszystkie pliki strony (skrypty, style, czcionki PDF) są serwowane z tej domeny – strona nie ładuje zasobów z innych serwerów.</li>
+        <li>Strona nie zapisuje plików cookies i nie używa narzędzi analitycznych. Dostawca hostingu może przetwarzać adresy IP odwiedzających w logach technicznych w celu zapewnienia bezpieczeństwa (art. 6 ust. 1 lit. f RODO).</li>
+        <li>Dane z formularza kontaktowego (imię, telefon, e-mail, miasto, wiadomość i – jeśli zaznaczysz – wynik kalkulacji) przetwarzamy, aby odpowiedzieć na zapytanie i przygotować ofertę: na podstawie Twojej zgody (art. 6 ust. 1 lit. a RODO) oraz działań przed zawarciem umowy (art. 6 ust. 1 lit. b RODO). Podanie danych jest dobrowolne, ale bez nich nie odpowiemy na zapytanie. Wraz z zapytaniem zapisujemy datę udzielenia zgody. Odbiorcami mogą być dostawca obsługi formularza lub poczty e-mail oraz współpracująca agencja rejestracyjna lub celna. Formularz obsługuje zewnętrzny dostawca (np. Formspree z siedzibą w USA) – przekazanie danych poza Europejski Obszar Gospodarczy odbywa się na podstawie mechanizmów z rozdziału V RODO (np. standardowych klauzul umownych) stosowanych przez dostawcę. Dane przechowujemy do zakończenia sprawy, nie dłużej niż 12 miesięcy od ostatniego kontaktu.</li>
         <li>Masz prawo do dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania, przenoszenia, wniesienia sprzeciwu i cofnięcia zgody w dowolnym momencie (bez wpływu na zgodność z prawem wcześniejszego przetwarzania), a także do skargi do Prezesa UODO.</li>
         <li>Link „Sprawdź historię auta po VIN” prowadzi do serwisu carVertical, który stosuje własne pliki cookies. Za zakup raportu przez ten link możemy otrzymać prowizję.</li>
+      </ol>
+    </article>
+
+    <article id="regulamin" class="text-sm">
+      <h2>Regulamin serwisu</h2>
+      <ol>
+        <li>Serwis Akcyzator prowadzi <span data-owner="name"></span>, kontakt: <span data-owner="email"></span> („Usługodawca”).</li>
+        <li>Usługodawca świadczy nieodpłatnie drogą elektroniczną: kalkulator akcyzy i kosztów importu samochodu, generowanie kosztorysu PDF oraz formularz zapytania. Umowa o korzystanie z kalkulatora jest zawierana z chwilą otwarcia strony i rozwiązuje się z chwilą jej zamknięcia; umowa dotycząca formularza – z chwilą jego wysłania i rozwiązuje się po udzieleniu odpowiedzi.</li>
+        <li>Wymagania techniczne: urządzenie z dostępem do internetu i aktualna przeglądarka z włączoną obsługą JavaScript.</li>
+        <li>Zakazane jest dostarczanie treści o charakterze bezprawnym, w tym wysyłanie przez formularz cudzych danych bez zgody, spamu lub złośliwego oprogramowania.</li>
+        <li>Wyniki kalkulatora mają charakter informacyjny i nie stanowią doradztwa podatkowego ani prawnego. Kwotę podatku wykazuje podatnik w deklaracji lub zgłoszeniu celnym, a organy podatkowe i celne mogą ją zweryfikować. Usługodawca dba o aktualność stawek na dzień wskazany jako stan prawny.</li>
+        <li>Raporty carVertical oraz usługi agencji rejestracyjnych i celnych świadczą te podmioty na podstawie własnych regulaminów.</li>
+        <li>Reklamacje dotyczące działania serwisu można zgłaszać na adres e-mail Usługodawcy. Odpowiadamy w ciągu 14 dni.</li>
+        <li>Regulamin jest dostępny nieodpłatnie na tej stronie i można go zapisać lub wydrukować. Zmiany regulaminu publikujemy na tej stronie wraz z datą. Wersja z dnia 25.10.2026 r.</li>
       </ol>
     </article>
   </section>
@@ -533,7 +497,7 @@
   <div class="max-w-6xl mx-auto px-4 py-8 text-sm space-y-2">
     <p class="font-bold text-white">Akcyzator – Kalkulator Akcyzy Samochodowej 2026</p>
     <p>Kursy walut: API Narodowego Banku Polskiego (tabela A). Stan prawny: 24.10.2026. Kalkulator ma charakter informacyjny i nie stanowi doradztwa podatkowego.</p>
-    <p><a class="underline" href="#prywatnosc">Polityka prywatności</a> · <a class="underline" href="#pomoc">Pomoc w rejestracji</a> · <a class="underline" href="#vin-check">Historia auta po VIN</a></p>
+    <p><a class="underline" href="#prywatnosc">Polityka prywatności</a> · <a class="underline" href="#regulamin">Regulamin</a> · <a class="underline" href="#pomoc">Pomoc w rejestracji</a> · <a class="underline" href="#vin-check">Historia auta po VIN</a></p>
   </div>
 </footer>
 
@@ -544,1002 +508,5 @@
   </div>
   <a href="#wynik" class="btn btn-primary py-2 px-3 text-sm">Zobacz wynik</a>
 </div>
-
-<script>
-'use strict';
-
-/* =====================================================================
- * KONFIGURACJA – uzupełnij przed publikacją (patrz README.md)
- * ===================================================================== */
-const CONFIG = {
-  brand: 'Akcyzator',
-  affiliate: {
-    // Wklej tutaj swój link partnerski z panelu carVertical (zakładka z linkami).
-    baseUrl: 'https://www.carvertical.com/pl',
-    // Nazwa parametru, w którym przekazywany jest VIN (potwierdź w panelu partnera).
-    vinParam: 'vin',
-    prices: [
-      { qty: '1 raport', price: '89,99 zł', note: '' },
-      { qty: '2 raporty', price: '74,99 zł', note: 'za sztukę' },
-      { qty: '3 raporty', price: '65,99 zł', note: 'za sztukę' },
-    ],
-  },
-  lead: {
-    formEndpoint: '', // np. 'https://formspree.io/f/abcdwxyz' – zgłoszenia trafią na Twój e-mail
-    email: '',        // zapasowo: 'kontakt@twojadomena.pl' – otworzy program pocztowy klienta
-    phone: '',        // np. '+48 600 000 000' – pokaże przycisk „Zadzwoń”
-  },
-  owner: {
-    name: '[uzupełnij: imię i nazwisko lub nazwa firmy, adres]',
-    email: '[uzupełnij: adres e-mail]',
-  },
-};
-
-const LEGAL_STATE = '24.10.2026';
-const NBP_API = 'https://api.nbp.pl/api/exchangerates/rates/a';
-const MAX_DAYS_BACK = 7; // najdłuższa przerwa w publikacji tabel NBP (np. 22–26.12.2029) to 5 dni
-const PDFMAKE_SRC = 'https://cdn.jsdelivr.net/npm/pdfmake@0.2.23/build/pdfmake.min.js';
-const VFS_SRC = 'https://cdn.jsdelivr.net/npm/pdfmake@0.2.23/build/vfs_fonts.js';
-const US_DUTY_FROM = '2026-07-01';
-const EXEMPTIONS_UNTIL = '2029-12-31';
-
-const COUNTRIES = {
-  eu: [['DE', 'Niemcy', 'EUR'], ['FR', 'Francja', 'EUR'], ['BE', 'Belgia', 'EUR'], ['NL', 'Holandia', 'EUR'], ['AT', 'Austria', 'EUR'],
-       ['IT', 'Włochy', 'EUR'], ['ES', 'Hiszpania', 'EUR'], ['LU', 'Luksemburg', 'EUR'], ['LT', 'Litwa', 'EUR'], ['SE', 'Szwecja', 'SEK'],
-       ['DK', 'Dania', 'DKK'], ['CZ', 'Czechy', 'CZK'], ['XE', 'Inny kraj UE', 'EUR']],
-  noneu: [['US', 'USA', 'USD'], ['CA', 'Kanada', 'CAD'], ['GB', 'Wielka Brytania', 'GBP'], ['CH', 'Szwajcaria', 'CHF'],
-          ['NO', 'Norwegia', 'NOK'], ['XN', 'Inny kraj spoza UE', 'USD']],
-};
-const DRIVE_LABELS = {
-  ice: 'Spalinowy', hev: 'Hybryda HEV / MHEV (bez wtyczki)', phev: 'Hybryda plug-in (PHEV)', bev: 'Elektryczny (BEV)', fcev: 'Wodorowy (FCEV)',
-};
-const FUEL_LABELS = { petrol: 'benzyna', lpg: 'benzyna + LPG/CNG', diesel: 'diesel' };
-
-const $ = (id) => document.getElementById(id);
-
-/* ---------------------------- daty ---------------------------- */
-const DAY_NAMES = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
-function parseISO(s) { const [y, m, d] = s.split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)); }
-function toISO(dt) { return dt.toISOString().slice(0, 10); }
-function addDays(s, n) { const d = parseISO(s); d.setUTCDate(d.getUTCDate() + n); return toISO(d); }
-function weekday(s) { return parseISO(s).getUTCDay(); }
-function fmtDate(s) { const [y, m, d] = s.split('-'); return `${d}.${m}.${y}`; }
-function fmtDateLong(s) { return `${fmtDate(s)} (${DAY_NAMES[weekday(s)]})`; }
-function isValidISO(s) { return /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(parseISO(s)) && toISO(parseISO(s)) === s; }
-function todayWarsaw() {
-  try {
-    return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Warsaw', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-  } catch (e) { return toISO(new Date()); }
-}
-function easterSunday(y) {
-  const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4;
-  const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
-  const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
-  const month = Math.floor((h + l - 7 * m + 114) / 31), day = ((h + l - 7 * m + 114) % 31) + 1;
-  return toISO(new Date(Date.UTC(y, month - 1, day)));
-}
-const holidayCache = {};
-function polishHolidays(y) {
-  if (holidayCache[y]) return holidayCache[y];
-  const h = {};
-  const fixed = [['01-01', 'Nowy Rok'], ['05-01', 'Święto Pracy'], ['05-03', 'Święto Konstytucji 3 Maja'], ['08-15', 'Wniebowzięcie NMP'],
-                 ['11-01', 'Wszystkich Świętych'], ['11-11', 'Narodowe Święto Niepodległości'], ['12-25', 'Boże Narodzenie'],
-                 ['12-26', 'drugi dzień Bożego Narodzenia']];
-  fixed.forEach(([md, n]) => { h[`${y}-${md}`] = n; });
-  if (y >= 2011) h[`${y}-01-06`] = 'Święto Trzech Króli';
-  if (y >= 2025) h[`${y}-12-24`] = 'Wigilia Bożego Narodzenia';
-  const e = easterSunday(y);
-  h[e] = 'Wielkanoc';
-  h[addDays(e, 1)] = 'Poniedziałek Wielkanocny';
-  h[addDays(e, 49)] = 'Zielone Świątki';
-  h[addDays(e, 60)] = 'Boże Ciało';
-  holidayCache[y] = h;
-  return h;
-}
-function holidayName(s) { return polishHolidays(+s.slice(0, 4))[s] || null; }
-function nonBusinessReason(s) {
-  const n = holidayName(s);
-  if (n) return `święto (${n})`;
-  const w = weekday(s);
-  if (w === 6) return 'sobota';
-  if (w === 0) return 'niedziela';
-  return null;
-}
-// art. 12 § 5 Ordynacji podatkowej: termin w sobotę lub dzień ustawowo wolny przechodzi na następny dzień roboczy
-function shiftDeadline(s) { let d = s; while (weekday(d) === 6 || weekday(d) === 0 || holidayName(d)) d = addDays(d, 1); return d; }
-function penultimateWednesdayPrevMonth(s) {
-  const d = parseISO(s);
-  const last = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 0)); // ostatni dzień poprzedniego miesiąca
-  while (last.getUTCDay() !== 3) last.setUTCDate(last.getUTCDate() - 1);
-  last.setUTCDate(last.getUTCDate() - 7);
-  return toISO(last);
-}
-
-/* ------------------------ liczby i formaty ------------------------ */
-function parseAmount(v) {
-  let s = String(v == null ? '' : v).trim().replace(/[\s  ]/g, '').replace(/zł|pln|eur|usd/gi, '');
-  if (!s) return 0;
-  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g, '').replace(',', '.');
-  else if (s.includes(',')) s = s.replace(',', '.');
-  else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');
-  const n = parseFloat(s);
-  return isFinite(n) && n > 0 ? n : 0;
-}
-function parseRate(v) {
-  const n = parseFloat(String(v == null ? '' : v).trim().replace(/[\s ]/g, '').replace(',', '.'));
-  return isFinite(n) && n > 0 ? n : 0;
-}
-// Ordynacja podatkowa art. 63 § 1: < 50 gr w dół, >= 50 gr w górę
-function roundPLN(x) { const gr = Math.round(x * 100); return Math.floor((gr + 50) / 100); }
-const nf2 = new Intl.NumberFormat('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const nf0 = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 0 });
-const zl = (x) => nf2.format(x) + ' zł';
-const zl0 = (x) => nf0.format(x) + ' zł';
-const money = (x, c) => nf2.format(x) + ' ' + c;
-const plain2 = (x) => x.toFixed(2).replace('.', ','); // do wklejenia w pola formularza (bez separatorów tysięcy)
-const pct = (r) => (r * 100).toLocaleString('pl-PL', { maximumFractionDigits: 2 }) + '%';
-const rate4 = (r) => r.toLocaleString('pl-PL', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
-function esc(s) { return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
-
-/* ------------------------ stawki akcyzy ------------------------ */
-function exciseRule(drive, cc) {
-  if (drive === 'bev') return { rate: 0, exempt: true, label: '0% – zwolnienie (samochód elektryczny)', legal: 'art. 109a ustawy o podatku akcyzowym (zwolnienie do 31.12.2029 r.)' };
-  if (drive === 'fcev') return { rate: 0, exempt: true, label: '0% – zwolnienie (samochód napędzany wodorem)', legal: 'art. 109a ustawy o podatku akcyzowym (zwolnienie do 31.12.2029 r.)' };
-  if (drive === 'phev') {
-    if (cc <= 2000) return { rate: 0, exempt: true, label: '0% – zwolnienie (PHEV do 2000 cm³)', legal: 'art. 163a ustawy o podatku akcyzowym (zwolnienie do 31.12.2029 r.)' };
-    if (cc <= 3500) return { rate: 0.093, label: '9,3% – hybryda 2001–3500 cm³', legal: 'art. 105 ustawy o podatku akcyzowym' };
-    return { rate: 0.186, label: '18,6% – hybryda powyżej 3500 cm³', legal: 'art. 105 ustawy o podatku akcyzowym' };
-  }
-  if (drive === 'hev') {
-    if (cc <= 2000) return { rate: 0.0155, label: '1,55% – hybryda HEV/MHEV do 2000 cm³', legal: 'art. 105 ustawy o podatku akcyzowym' };
-    if (cc <= 3500) return { rate: 0.093, label: '9,3% – hybryda 2001–3500 cm³', legal: 'art. 105 ustawy o podatku akcyzowym' };
-    return { rate: 0.186, label: '18,6% – hybryda powyżej 3500 cm³', legal: 'art. 105 ustawy o podatku akcyzowym' };
-  }
-  if (cc <= 2000) return { rate: 0.031, label: '3,1% – silnik do 2000 cm³', legal: 'art. 105 ustawy o podatku akcyzowym' };
-  return { rate: 0.186, label: '18,6% – silnik powyżej 2000 cm³', legal: 'art. 105 ustawy o podatku akcyzowym' };
-}
-const ALL_CATEGORIES = [
-  { id: 'zev', name: 'Elektryczny / wodorowy', drive: 'bev', cc: 0 },
-  { id: 'phev2000', name: 'PHEV do 2000 cm³', drive: 'phev', cc: 2000 },
-  { id: 'hev2000', name: 'HEV / MHEV do 2000 cm³', drive: 'hev', cc: 2000 },
-  { id: 'ice2000', name: 'Spalinowy do 2000 cm³', drive: 'ice', cc: 2000 },
-  { id: 'hyb3500', name: 'Hybryda 2001–3500 cm³', drive: 'hev', cc: 2001 },
-  { id: 'ice2001', name: 'Spalinowy powyżej 2000 cm³', drive: 'ice', cc: 2001 },
-  { id: 'hyb3501', name: 'Hybryda powyżej 3500 cm³', drive: 'hev', cc: 3501 },
-];
-function categoryId(drive, cc) {
-  if (drive === 'bev' || drive === 'fcev') return 'zev';
-  if (drive === 'ice') return cc <= 2000 ? 'ice2000' : 'ice2001';
-  if (cc <= 2000) return drive === 'phev' ? 'phev2000' : 'hev2000';
-  return cc <= 3500 ? 'hyb3500' : 'hyb3501';
-}
-function cnHeading(drive, fuel, cc) {
-  const diesel = fuel === 'diesel';
-  if (drive === 'bev') return '8703 80 – wyłącznie silnik elektryczny';
-  if (drive === 'fcev') return '8703 80 lub 8703 90 – napęd wodorowy (potwierdź w ISZTAR)';
-  if (drive === 'phev') return diesel ? '8703 70 – hybryda plug-in, diesel' : '8703 60 – hybryda plug-in, benzyna';
-  if (drive === 'hev') return diesel ? '8703 50 – hybryda bez ładowania z zewnątrz, diesel' : '8703 40 – hybryda bez ładowania z zewnątrz, benzyna';
-  if (diesel) return cc <= 1500 ? '8703 31 – diesel do 1500 cm³' : cc <= 2500 ? '8703 32 – diesel 1500–2500 cm³' : '8703 33 – diesel powyżej 2500 cm³';
-  return cc <= 1000 ? '8703 21 – benzyna do 1000 cm³' : cc <= 1500 ? '8703 22 – benzyna 1000–1500 cm³' : cc <= 3000 ? '8703 23 – benzyna 1500–3000 cm³' : '8703 24 – benzyna powyżej 3000 cm³';
-}
-
-/* ------------------------ API NBP ------------------------ */
-const rateCache = new Map();
-async function fetchJSON(url, timeoutMs = 9000) {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
-  try {
-    const r = await fetch(url, { headers: { Accept: 'application/json' }, signal: ctrl.signal, cache: 'no-cache' });
-    if (r.status === 404) return { notFound: true };
-    if (r.status === 400) return { badRequest: true };
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return { data: await r.json() };
-  } finally { clearTimeout(timer); }
-}
-
-/* Art. 104 ust. 12–13: kurs z dnia powstania obowiązku, a gdy NBP go nie ogłosił – ostatni ogłoszony przed tym dniem. */
-async function getNbpRate(code, dateISO) {
-  const today = todayWarsaw();
-  const trace = [];
-  if (dateISO > today) {
-    const res = await fetchJSON(`${NBP_API}/${code.toLowerCase()}/?format=json`);
-    if (!res.data) throw new Error('API NBP nie zwróciło bieżącej tabeli.');
-    const r = res.data.rates[0];
-    trace.push({ date: r.effectiveDate, ok: true, no: r.no, note: 'ostatnia opublikowana tabela – data w przyszłości' });
-    return { code, mid: r.mid, no: r.no, effectiveDate: r.effectiveDate, requestedDate: dateISO, trace, estimated: true };
-  }
-  let d = dateISO;
-  let provisional = false;
-  for (let i = 0; i <= MAX_DAYS_BACK; i++) {
-    const key = code + '|' + d;
-    let hit = rateCache.get(key);
-    if (!hit) {
-      const res = await fetchJSON(`${NBP_API}/${code.toLowerCase()}/${d}/?format=json`);
-      if (res.data && res.data.rates && res.data.rates[0]) {
-        const r = res.data.rates[0];
-        hit = { ok: true, mid: r.mid, no: r.no, effectiveDate: r.effectiveDate };
-        rateCache.set(key, hit);
-      } else if (res.notFound) {
-        hit = { ok: false };
-        if (d !== today) rateCache.set(key, hit);
-      } else {
-        throw new Error('API NBP odrzuciło zapytanie o datę ' + fmtDate(d) + '.');
-      }
-    }
-    if (hit.ok) {
-      trace.push({ date: d, ok: true, no: hit.no });
-      return { code, mid: hit.mid, no: hit.no, effectiveDate: hit.effectiveDate, requestedDate: dateISO, trace, provisional };
-    }
-    const reason = nonBusinessReason(d);
-    if (d === today && !reason) {
-      provisional = true;
-      trace.push({ date: d, ok: false, note: 'tabela na dziś jeszcze nieopublikowana (NBP publikuje ok. 11:45–12:15)' });
-    } else {
-      trace.push({ date: d, ok: false, note: reason ? `brak tabeli – ${reason}` : 'brak tabeli (dzień bez publikacji NBP)' });
-    }
-    d = addDays(d, -1);
-  }
-  throw new Error(`Nie znaleziono tabeli A NBP w ciągu ${MAX_DAYS_BACK} dni przed ${fmtDate(dateISO)}.`);
-}
-async function getCustomsRate(code, dateISO) {
-  const ref = penultimateWednesdayPrevMonth(dateISO);
-  const r = await getNbpRate(code, ref);
-  return Object.assign({}, r, { kind: 'customs', customsRef: ref, requestedDate: dateISO });
-}
-
-/* ------------------------ stan formularza ------------------------ */
-const rateState = { key: null, data: null, error: null, loading: false, eur: null, eurKey: null, token: 0 };
-
-function radio(name) { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : null; }
-function readState() {
-  const route = radio('route');
-  const drive = $('drive').value;
-  const needsEngine = drive === 'ice' || drive === 'hev' || drive === 'phev';
-  const vin = normVin($('vin').value);
-  return {
-    route,
-    clearance: route === 'noneu' ? radio('clearance') : null,
-    country: $('country').value,
-    countryName: $('country').selectedOptions[0] ? $('country').selectedOptions[0].textContent : '',
-    currency: $('currency').value,
-    price: parseAmount($('price').value),
-    transportBorder: route === 'noneu' ? parseAmount($('transportBorder').value) : 0,
-    postBorder: route === 'noneu' ? parseAmount($('postBorder').value) : 0,
-    date: $('date').value,
-    drive,
-    fuel: needsEngine ? $('fuel').value : null,
-    cc: needsEngine ? Math.round(parseAmount($('cc').value)) : 0,
-    needsEngine,
-    newVehicle: route === 'eu' && $('newVehicle').checked,
-    duty: route === 'noneu' ? radio('duty') : null,
-    manual: $('manualRateToggle').checked,
-    manualRate: parseRate($('manualRate').value),
-    regOn: $('regOn').checked, regAmount: parseAmount($('regAmount').value), customPlates: $('customPlates').checked,
-    inspOn: $('inspOn').checked, inspAccident: $('inspAccident').checked,
-    transOn: $('transOn').checked, transAmount: parseAmount($('transAmount').value),
-    exportPlates: route === 'eu' ? parseAmount($('exportPlates').value) : 0,
-    transportPL: route === 'eu' ? parseAmount($('transportPL').value) : 0,
-    agency: route === 'noneu' ? parseAmount($('agency').value) : 0,
-    otherCosts: parseAmount($('otherCosts').value),
-    model: $('model').value.trim(),
-    vin,
-  };
-}
-function rateKind(st) { return st.route === 'noneu' && st.clearance === 'pl' ? 'customs' : 'nbp'; }
-function rateKey(st) { return `${rateKind(st)}|${st.currency}|${st.date}`; }
-
-/* ------------------------ obliczenia ------------------------ */
-function effectiveRate(st) {
-  if (st.currency === 'PLN') return { mid: 1, source: 'pln' };
-  if (st.manual && st.manualRate > 0) return { mid: st.manualRate, source: 'manual' };
-  if (rateState.data && rateState.key === rateKey(st)) return { mid: rateState.data.mid, source: 'api', info: rateState.data };
-  return null;
-}
-function eurRate(st, R) {
-  if (st.currency === 'EUR' && R) return R.mid;
-  if (rateState.eur && rateState.eurKey === st.date) return rateState.eur.mid;
-  return null;
-}
-
-function calculate(st) {
-  const R = effectiveRate(st);
-  const res = { st, R, warnings: [], notes: [], rows: [], costRows: [] };
-  if (!st.price) { res.incomplete = 'Wpisz cenę zakupu.'; return res; }
-  if (!isValidISO(st.date)) { res.incomplete = 'Wybierz datę.'; return res; }
-  if (st.needsEngine && !st.cc) { res.incomplete = 'Wpisz pojemność silnika (cm³).'; return res; }
-  if (!R) { res.incomplete = rateState.loading ? 'Pobieram kurs z API NBP…' : 'Brak kursu – wpisz kurs ręcznie.'; return res; }
-
-  const r = R.mid;
-  const rule = exciseRule(st.drive, st.cc);
-  res.rule = rule;
-  const cur = st.currency;
-  let duty = 0, dutyRate = 0, wc = 0, base, excise, vat = 0, vatBase = 0, vatRate = 0, vatLabel = '';
-
-  if (st.route === 'eu') {
-    const pricePLN = st.price * r;
-    res.carPLN = pricePLN;
-    base = roundPLN(pricePLN);
-    excise = roundPLN(base * rule.rate);
-    res.rows.push({ label: `Cena zakupu (${money(st.price, cur)}${cur !== 'PLN' ? ' × ' + rate4(r) : ''})`, value: zl(pricePLN) });
-    res.rows.push({ label: 'Podstawa opodatkowania akcyzą (zaokrąglona)', value: zl0(base), sub: true });
-    res.rows.push({ label: `Akcyza ${pct(rule.rate)}`, value: zl0(excise), strong: true });
-    res.rows.push({ label: 'Cło (import z UE)', value: zl0(0), sub: true });
-    if (st.newVehicle) {
-      vatRate = 0.23;
-      vatBase = roundPLN(pricePLN + excise);
-      vat = roundPLN(vatBase * vatRate);
-      vatLabel = 'VAT 23% od WNT nowego środka transportu';
-      res.rows.push({ label: `${vatLabel} (podstawa ${zl0(vatBase)})`, value: zl0(vat) });
-      res.notes.push('VAT od nowego środka transportu rozliczasz osobno (dla osób prywatnych – deklaracja VAT-23). Do podstawy VAT wlicza się akcyzę. Kurs i termin dla VAT mogą różnić się od akcyzowych – kwota orientacyjna.');
-    } else {
-      res.rows.push({ label: 'VAT (auto używane z UE)', value: zl0(0), sub: true });
-    }
-  } else {
-    const wcCur = st.price + st.transportBorder;
-    wc = wcCur * r;
-    res.carPLN = wc;
-    dutyRate = st.duty === 'std' ? 0.10 : 0;
-    if (st.duty === 'us' && st.date < US_DUTY_FROM) {
-      dutyRate = 0.10;
-      res.warnings.push('Cło 0% dla aut pochodzenia amerykańskiego stosuje się od 1.07.2026 r. (rozporządzenie (UE) 2026/1455). Dla wcześniejszej daty przyjęto 10%.');
-    }
-    duty = roundPLN(wc * dutyRate);
-    base = roundPLN(wc + duty);
-    excise = roundPLN(base * rule.rate);
-    res.rows.push({ label: `Cena zakupu (${money(st.price, cur)})`, value: zl(st.price * r), sub: true });
-    res.rows.push({ label: `Koszty do granicy UE (${money(st.transportBorder, cur)})`, value: zl(st.transportBorder * r), sub: true });
-    res.rows.push({ label: `Wartość celna (${money(wcCur, cur)}${cur !== 'PLN' ? ' × ' + rate4(r) : ''})`, value: zl(wc) });
-    res.rows.push({ label: `Cło ${pct(dutyRate)}${st.clearance === 'de' ? ' – płatne w Niemczech' : ''}`, value: zl0(duty), strong: true });
-    res.rows.push({ label: 'Podstawa akcyzy: wartość celna + cło (zaokr.)', value: zl0(base), sub: true });
-    res.rows.push({ label: `Akcyza ${pct(rule.rate)}${st.clearance === 'de' ? ' – w Polsce (AKC-U/S)' : ''}`, value: zl0(excise), strong: true });
-    if (st.clearance === 'pl') {
-      vatRate = 0.23;
-      vatBase = roundPLN(wc + duty + excise + st.postBorder);
-      vatLabel = 'VAT importowy 23%';
-      res.rows.push({ label: `Podstawa VAT: wartość celna + cło + akcyza${st.postBorder ? ' + koszty od portu' : ''}`, value: zl0(vatBase), sub: true });
-    } else {
-      vatRate = 0.19;
-      vatBase = roundPLN(wc + duty + st.postBorder);
-      vatLabel = 'Niemiecki VAT importowy (EUSt) 19%';
-      res.rows.push({ label: `Podstawa EUSt: wartość celna + cło${st.postBorder ? ' + koszty od portu' : ''} (bez polskiej akcyzy)`, value: zl0(vatBase), sub: true });
-      res.notes.push('Przy odprawie w Niemczech cło i VAT (EUSt) płacisz w euro po niemieckim kursie celnym – kwoty w złotych są orientacyjne. Urząd skarbowy może przyjąć inną podstawę akcyzy niż wartość celna z cłem; potwierdź ją z agencją celną przed złożeniem AKC-U/S.');
-    }
-    vat = roundPLN(vatBase * vatRate);
-    res.rows.push({ label: vatLabel, value: zl0(vat), strong: true });
-  }
-
-  res.base = base; res.excise = excise; res.duty = duty; res.dutyRate = dutyRate; res.vat = vat; res.vatRate = vatRate;
-  res.vatBase = vatBase; res.vatLabel = vatLabel; res.wc = wc;
-  res.taxes = duty + excise + vat;
-
-  // koszty dodatkowe
-  const costs = [];
-  if (st.route === 'noneu' && st.postBorder) costs.push(['Transport od portu UE do miejsca przeznaczenia', st.postBorder]);
-  if (st.route === 'noneu' && st.agency) costs.push(['Agencja celna, spedycja, opłaty portowe', st.agency]);
-  if (st.route === 'eu' && st.transportPL) costs.push(['Transport do Polski', st.transportPL]);
-  if (st.route === 'eu' && st.exportPlates) {
-    const er = eurRate(st, R);
-    if (er) costs.push([`Tablice wywozowe (${money(st.exportPlates, 'EUR')} × ${rate4(er)})`, st.exportPlates * er]);
-    else res.warnings.push('Brak kursu EUR – koszt tablic wywozowych nie został doliczony.');
-  }
-  if (st.regOn) costs.push(['Rejestracja w wydziale komunikacji', st.regAmount]);
-  if (st.regOn && st.customPlates) costs.push(['Tablice indywidualne (dopłata)', 920]);
-  if (st.inspOn) {
-    costs.push(['Badanie techniczne', 149]);
-    if (st.fuel === 'lpg') costs.push(['Badanie instalacji LPG/CNG', 96]);
-    if (st.inspAccident) costs.push(['Badanie po wypadku / kolizji', 143]);
-  }
-  if (st.transOn) costs.push(['Tłumaczenie przysięgłe', st.transAmount]);
-  if (st.otherCosts) costs.push(['Inne koszty', st.otherCosts]);
-  res.costRows = costs;
-  res.costsTotal = costs.reduce((a, c) => a + c[1], 0);
-  res.total = res.carPLN + res.taxes + res.costsTotal;
-
-  // terminy AKC-U/S
-  res.aksus = st.route === 'eu' || st.clearance === 'de';
-  if (res.aksus) {
-    const d14 = addDays(st.date, 14), d30 = addDays(st.date, 30);
-    res.deadlines = { decl: shiftDeadline(d14), declRaw: d14, pay: shiftDeadline(d30), payRaw: d30 };
-  }
-
-  // próg 2000 cm³
-  if (st.needsEngine) {
-    const lo = exciseRule(st.drive, 2000), hi = exciseRule(st.drive, 2001);
-    const aLo = roundPLN(base * lo.rate), aHi = roundPLN(base * hi.rate);
-    let extraVat = 0;
-    if (st.route === 'noneu' && st.clearance === 'pl') extraVat = roundPLN((aHi - aLo) * 0.23);
-    if (st.route === 'eu' && st.newVehicle) extraVat = roundPLN((aHi - aLo) * 0.23);
-    res.threshold = { lo, hi, aLo, aHi, diff: aHi - aLo, extraVat, current: st.cc <= 2000 ? 'lo' : 'hi', over3500: st.cc > 3500 };
-  }
-
-  // ostrzeżenia merytoryczne
-  if (rule.exempt && st.date > EXEMPTIONS_UNTIL) res.warnings.push('Zwolnienia dla aut elektrycznych, wodorowych i PHEV do 2000 cm³ obowiązują do 31.12.2029 r. – dla tej daty sprawdź aktualne przepisy.');
-  if (rule.exempt) res.notes.push(`Podstawa zwolnienia: ${rule.legal}. Zachowaj dokumenty potwierdzające rodzaj napędu.`);
-  if (st.drive === 'hev') res.notes.push('MHEV: interpretacja ogólna Ministra Finansów z 26.02.2026 r. (PAD6.8101.1.2026) potwierdza prawo do stawek 1,55% i 9,3%. Zachowaj dokumentację napędu hybrydowego.');
-  if (st.route === 'noneu' && st.duty === 'us' && st.vin.length === 17) {
-    const reg = vinRegion(st.vin);
-    if (reg && !reg.us) res.warnings.push(`VIN wskazuje producenta spoza USA (${reg.country}). Cło 0% przysługuje tylko autom pochodzenia amerykańskiego.`);
-  }
-  if (R.source === 'api' && R.info.provisional) res.warnings.push('Kurs wstępny: tabela NBP z dnia wjazdu nie jest jeszcze opublikowana. Odśwież wynik po 12:15.');
-  if (R.source === 'api' && R.info.estimated) res.warnings.push('Data w przyszłości – użyto ostatniego opublikowanego kursu NBP jako szacunku.');
-  res.notes.push('Jeśli zadeklarowana kwota znacznie odbiega od średniej wartości rynkowej auta bez uzasadnionej przyczyny, naczelnik urzędu skarbowego może określić podstawę opodatkowania na podstawie wartości rynkowej (art. 104 ustawy o podatku akcyzowym).');
-  return res;
-}
-
-/* ------------------------ VIN ------------------------ */
-function normVin(v) { return String(v || '').toUpperCase().replace(/[\s-]/g, ''); }
-const VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
-const VIN_MAP = { A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8, J: 1, K: 2, L: 3, M: 4, N: 5, P: 7, R: 9, S: 2, T: 3, U: 4, V: 5, W: 6, X: 7, Y: 8, Z: 9 };
-const VIN_W = [8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2];
-function vinCheckDigitOk(v) {
-  let s = 0;
-  for (let i = 0; i < 17; i++) { const c = v[i]; s += (/\d/.test(c) ? +c : VIN_MAP[c]) * VIN_W[i]; }
-  const r = s % 11;
-  return v[8] === (r === 10 ? 'X' : String(r));
-}
-function vinRegion(v) {
-  const c = v[0], c2 = v.slice(0, 2);
-  if ('145'.includes(c)) return { country: 'USA', us: true };
-  if (c === '2') return { country: 'Kanada' };
-  if (c === '3') return { country: 'Meksyk' };
-  if (c === 'J') return { country: 'Japonia' };
-  if (c === 'K') return { country: 'Korea Południowa' };
-  if (c === 'L') return { country: 'Chiny' };
-  if (c === 'W') return { country: 'Niemcy' };
-  if (c === 'Z') return { country: 'Włochy' };
-  if (c === 'S' && c2 >= 'SA' && c2 <= 'SM') return { country: 'Wielka Brytania' };
-  if (c === 'S' && c2 >= 'SU' && c2 <= 'SZ') return { country: 'Polska' };
-  if (c === 'V' && c2 >= 'VF' && c2 <= 'VR') return { country: 'Francja' };
-  if (c === 'V' && c2 >= 'VS' && c2 <= 'VW') return { country: 'Hiszpania' };
-  if (c === 'Y' && c2 >= 'YS' && c2 <= 'YW') return { country: 'Szwecja' };
-  return null;
-}
-function vinStatus(v) {
-  if (!v) return { state: 'empty' };
-  if (v.length !== 17) return { state: 'len' };
-  if (!VIN_RE.test(v)) return { state: 'chars' };
-  const reg = vinRegion(v);
-  const na = '12345'.includes(v[0]);
-  return { state: 'ok', reg, checkWarn: na && !vinCheckDigitOk(v) };
-}
-function affiliateUrl(vin) {
-  try {
-    const u = new URL(CONFIG.affiliate.baseUrl);
-    if (vin && CONFIG.affiliate.vinParam) u.searchParams.set(CONFIG.affiliate.vinParam, vin);
-    return u.toString();
-  } catch (e) { return CONFIG.affiliate.baseUrl; }
-}
-
-/* ------------------------ renderowanie ------------------------ */
-let lastResult = null;
-
-function renderRateCard(st) {
-  const box = $('rateCard');
-  const kind = rateKind(st);
-  if (st.currency === 'PLN') {
-    box.innerHTML = '<p class="text-sm text-slate-600">Kwota w złotych – przeliczenie nie jest potrzebne.</p>';
-    return;
-  }
-  if (rateState.loading && rateState.key === rateKey(st)) {
-    box.innerHTML = `<p class="text-sm text-slate-600"><span class="spin"></span> Pobieram ${kind === 'customs' ? 'kurs celny' : 'kurs średni'} ${esc(st.currency)} z API NBP…</p>`;
-    return;
-  }
-  if (rateState.error && rateState.key === rateKey(st)) {
-    box.innerHTML = `<div class="rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-800"><b>Nie udało się pobrać kursu z API NBP.</b> ${esc(rateState.error)}<br>Wpisz kurs ręcznie poniżej – znajdziesz go na stronie nbp.pl (tabela A).
-      <button type="button" class="copy mt-2" data-action="rate-refresh">Spróbuj ponownie</button></div>`;
-    return;
-  }
-  const d = rateState.data;
-  if (!d || rateState.key !== rateKey(st)) { box.innerHTML = '<p class="text-sm text-slate-500">Wybierz datę, aby pobrać kurs.</p>'; return; }
-  const trace = d.trace.map((t) => `<li class="flex gap-2 items-start"><span class="mt-1.5 inline-block w-2 h-2 rounded-full ${t.ok ? 'bg-emerald-500' : 'bg-slate-300'} flex-none"></span><span><b>${fmtDateLong(t.date)}</b> – ${t.ok ? 'Tabela nr ' + esc(t.no) + (t.note ? ' (' + esc(t.note) + ')' : '') : esc(t.note)}</span></li>`).join('');
-  const head = kind === 'customs'
-    ? `<p class="text-xs font-bold uppercase tracking-wider text-teal-700">Kurs celny (odprawa w Polsce)</p>`
-    : `<p class="text-xs font-bold uppercase tracking-wider text-teal-700">Kurs średni NBP – art. 104 ust. 12–13</p>`;
-  const customsInfo = kind === 'customs'
-    ? `<p class="hint">Kurs celny ogłaszany przez NBP w przedostatnią środę miesiąca obowiązuje przez cały następny miesiąc. Dla odprawy ${fmtDate(st.date)} punktem odniesienia jest środa ${fmtDate(d.customsRef)}. Przed odprawą porównaj go z wykazem kursów celnych na podatki.gov.pl.</p>`
-    : '';
-  const used = st.manual && st.manualRate > 0;
-  box.innerHTML = `
-    <div class="rounded-xl border ${used ? 'border-slate-200 opacity-60' : 'border-teal-200 bg-teal-50/50'} p-4">
-      ${head}
-      <p class="text-2xl font-extrabold mt-1 tabular-nums">1 ${esc(d.code)} = ${rate4(d.mid)} zł</p>
-      <p class="text-sm font-semibold text-slate-700 mt-0.5">Tabela nr ${esc(d.no)} z dnia ${fmtDate(d.effectiveDate)}</p>
-      ${d.provisional ? '<p class="text-sm text-amber-700 mt-1 font-semibold">Wstępnie: tabela z dnia wjazdu nie jest jeszcze opublikowana. <button type="button" class="copy" data-action="rate-refresh">Odśwież kurs</button></p>' : ''}
-      ${d.estimated ? '<p class="text-sm text-amber-700 mt-1 font-semibold">Szacunek: data jest w przyszłości.</p>' : ''}
-      <ul class="mt-3 space-y-1 text-sm text-slate-600">${trace}</ul>
-      ${customsInfo}
-      ${used ? '<p class="text-sm font-semibold text-slate-700 mt-2">Używasz kursu wpisanego ręcznie.</p>' : ''}
-    </div>`;
-}
-
-function setText(id, t) { const el = $(id); if (el) el.textContent = t; }
-
-function renderResults(res) {
-  lastResult = res;
-  const st = res.st;
-  const warnBox = $('resWarnings');
-  if (res.incomplete) {
-    setText('resExcise', '–'); setText('resTotal', '–'); setText('resTaxes', '–');
-    setText('resExciseSub', res.incomplete);
-    setText('mbarExcise', '–'); setText('mbarTotal', '–');
-    warnBox.innerHTML = '';
-    $('resBreakdown').innerHTML = '';
-    $('cheatSheet').innerHTML = `<p class="text-sm text-slate-500">${esc(res.incomplete)}</p>`;
-    $('threshold').innerHTML = ''; $('allRates').innerHTML = '';
-    return;
-  }
-  setText('resKicker', st.route === 'noneu' && st.clearance === 'pl' ? 'Akcyza (w zgłoszeniu celnym)' : 'Akcyza do zapłaty (AKC-U/S)');
-  setText('resExcise', zl0(res.excise));
-  setText('resExciseSub', `${res.rule.label} · podstawa ${zl0(res.base)}`);
-  setText('resTotal', zl0(Math.round(res.total)));
-  setText('resTaxes', zl0(res.taxes));
-  setText('mbarExcise', zl0(res.excise));
-  setText('mbarTotal', zl0(Math.round(res.total)));
-
-  warnBox.innerHTML = res.warnings.map((w) => `<div class="rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-sm text-amber-900">${esc(w)}</div>`).join('');
-
-  let html = '<tbody>';
-  html += res.rows.map((r) => `<tr class="${r.sub ? 'sub' : ''}"><td>${esc(r.label)}</td><td class="num">${esc(r.value)}</td></tr>`).join('');
-  html += `<tr><td class="font-bold">Razem podatki i cło</td><td class="num">${zl0(res.taxes)}</td></tr>`;
-  if (res.costRows.length) {
-    html += `<tr><th colspan="2" class="pt-3">Rejestracja i formalności</th></tr>`;
-    html += res.costRows.map((c) => `<tr class="sub"><td>${esc(c[0])}</td><td class="num">${zl(c[1])}</td></tr>`).join('');
-    html += `<tr><td class="font-bold">Razem koszty dodatkowe</td><td class="num">${zl(res.costsTotal)}</td></tr>`;
-  }
-  html += `<tr class="sum"><td>SUMA – auto + podatki + koszty</td><td class="num">${zl(res.total)}</td></tr>`;
-  html += '</tbody>';
-  $('resBreakdown').innerHTML = html;
-  if (res.notes.length) {
-    $('resBreakdown').insertAdjacentHTML('beforeend', `<tbody><tr><td colspan="2" class="pt-3">${res.notes.map((n) => `<p class="hint">${esc(n)}</p>`).join('')}</td></tr></tbody>`);
-  }
-
-  renderCheatSheet(res);
-  renderThreshold(res);
-}
-
-function cheatRows(res) {
-  const st = res.st, R = res.R;
-  const rows = [];
-  rows.push(['Deklaracja', 'AKC-U/S – składana na puesc.gov.pl', null]);
-  rows.push(['Data powstania obowiązku podatkowego', fmtDateLong(st.date), st.date]);
-  rows.push(['Kraj nabycia', st.countryName + (st.clearance === 'de' ? ' (odprawa celna w Niemczech)' : ''), null]);
-  if (st.model) rows.push(['Marka i model', st.model, st.model]);
-  if (st.vin) rows.push(['Numer VIN', st.vin, st.vin]);
-  rows.push(['Rodzaj napędu', DRIVE_LABELS[st.drive] + (st.fuel ? ', ' + FUEL_LABELS[st.fuel] : ''), null]);
-  if (st.needsEngine) rows.push(['Pojemność skokowa silnika', st.cc + ' cm³', String(st.cc)]);
-  rows.push(['Pozycja CN (4+2 cyfry)', cnHeading(st.drive, st.fuel, st.cc), null]);
-  if (st.route === 'eu') rows.push(['Kwota z umowy / faktury', money(st.price, st.currency), plain2(st.price)]);
-  else rows.push(['Wartość celna + cło (wg kalkulatora)', zl(res.wc + res.duty), plain2(res.wc + res.duty)]);
-  if (st.currency !== 'PLN') {
-    if (R.source === 'api') rows.push(['Kurs średni NBP', `${rate4(R.mid)} zł – Tabela nr ${R.info.no} z dnia ${fmtDate(R.info.effectiveDate)}`, rate4(R.mid)]);
-    else rows.push(['Kurs (wpisany ręcznie)', rate4(R.mid) + ' zł', rate4(R.mid)]);
-  }
-  rows.push(['Podstawa opodatkowania', zl0(res.base), String(res.base)]);
-  rows.push(['Stawka akcyzy', pct(res.rule.rate) + (res.rule.exempt ? ' (zwolnienie)' : ''), pct(res.rule.rate)]);
-  rows.push(['Kwota akcyzy', zl0(res.excise), String(res.excise)]);
-  if (res.deadlines) {
-    rows.push(['Termin złożenia AKC-U/S', fmtDateLong(res.deadlines.decl) + ' – nie później niż w dniu rejestracji', res.deadlines.decl]);
-    rows.push(['Termin zapłaty akcyzy', fmtDateLong(res.deadlines.pay) + ' – nie później niż w dniu rejestracji', res.deadlines.pay]);
-  }
-  return rows;
-}
-
-function renderCheatSheet(res) {
-  const st = res.st;
-  const box = $('cheatSheet');
-  if (!res.aksus) {
-    setText('cheatTitle', 'Odprawa celna w Polsce – co z AKC-U/S?');
-    setText('cheatIntro', 'Przy imporcie z odprawą w Polsce akcyzę, cło i VAT wykazuje się w zgłoszeniu celnym (zwykle robi to agencja celna). Deklaracji AKC-U/S nie składasz.');
-    const items = [
-      ['Wartość celna', zl(res.wc)],
-      ['Cło ' + pct(res.dutyRate), zl0(res.duty)],
-      ['Akcyza ' + pct(res.rule.rate), zl0(res.excise)],
-      ['VAT 23%', zl0(res.vat)],
-      ['Razem do zapłaty przy odprawie', zl0(res.taxes)],
-      ['Pozycja CN', cnHeading(st.drive, st.fuel, st.cc)],
-    ];
-    box.innerHTML = `<table class="tbl"><tbody>${items.map((i) => `<tr><td>${esc(i[0])}</td><td class="num">${esc(i[1])}</td></tr>`).join('')}</tbody></table>
-      <p class="hint mt-2">Do rejestracji przygotuj dokument potwierdzający dopuszczenie auta do obrotu i zapłatę należności. Pełny 8-cyfrowy kod CN potwierdź w systemie ISZTAR.</p>`;
-    return;
-  }
-  setText('cheatTitle', 'Ściągawka do deklaracji PUESC AKC-U/S');
-  setText('cheatIntro', 'Dane do przepisania w formularzu AKC-U/S na puesc.gov.pl. Kliknij „Kopiuj”, aby skopiować wartość.');
-  const rows = cheatRows(res);
-  box.innerHTML = `
-    ${res.deadlines ? `<div class="grid grid-cols-2 gap-2 mb-3">
-      <div class="rounded-lg bg-teal-50 border border-teal-200 p-3"><p class="text-[11px] uppercase font-bold text-teal-700">Złóż AKC-U/S do</p><p class="font-extrabold text-lg">${fmtDate(res.deadlines.decl)}</p><p class="text-xs text-slate-600">${DAY_NAMES[weekday(res.deadlines.decl)]}${res.deadlines.decl !== res.deadlines.declRaw ? ' (przesunięty z ' + fmtDate(res.deadlines.declRaw) + ')' : ''}</p></div>
-      <div class="rounded-lg bg-slate-50 border border-slate-200 p-3"><p class="text-[11px] uppercase font-bold text-slate-600">Zapłać akcyzę do</p><p class="font-extrabold text-lg">${fmtDate(res.deadlines.pay)}</p><p class="text-xs text-slate-600">${DAY_NAMES[weekday(res.deadlines.pay)]}${res.deadlines.pay !== res.deadlines.payRaw ? ' (przesunięty z ' + fmtDate(res.deadlines.payRaw) + ')' : ''}</p></div>
-    </div>` : ''}
-    <table class="tbl"><tbody>${rows.map((r) => `<tr><td class="text-slate-500 w-2/5">${esc(r[0])}</td><td class="font-semibold">${esc(r[1])}</td><td class="text-right">${r[2] != null ? `<button type="button" class="copy" data-copy="${esc(r[2])}">Kopiuj</button>` : ''}</td></tr>`).join('')}</tbody></table>
-    <p class="hint mt-2">Terminy liczone od daty wjazdu: 14 dni (deklaracja) i 30 dni (zapłata), z przesunięciem z soboty lub dnia wolnego na najbliższy dzień roboczy (art. 12 § 5 Ordynacji podatkowej). Pełny 8-cyfrowy kod CN potwierdź w systemie ISZTAR.</p>`;
-}
-
-function renderThreshold(res) {
-  const st = res.st;
-  const box = $('threshold');
-  if (!res.threshold) {
-    box.innerHTML = '<p class="text-sm text-slate-600">Auta elektryczne i wodorowe są zwolnione z akcyzy niezależnie od mocy – próg 2000 cm³ ich nie dotyczy.</p>';
-  } else {
-    const t = res.threshold;
-    const total = t.diff + t.extraVat;
-    const vatTxt = t.extraVat ? ` (w tym ${zl0(t.extraVat)} VAT od wyższej akcyzy)` : '';
-    let msg;
-    if (t.over3500) msg = `Silnik powyżej 3500 cm³ – stawka 18,6%. Wersja do 2000 cm³ kosztowałaby ${zl0(t.aLo)} akcyzy.`;
-    else if (t.current === 'lo') msg = `Twój silnik mieści się w progu. Wersja powyżej 2000 cm³ kosztowałaby Cię dodatkowo <b>${zl0(total)}</b>${vatTxt}.`;
-    else msg = `Gdyby silnik miał do 2000 cm³, akcyza byłaby niższa o <b>${zl0(total)}</b>${vatTxt}.`;
-    const actual = t.over3500 ? res.rule : t.hi;
-    const aActual = t.over3500 ? res.excise : t.aHi;
-    const max = Math.max(t.aLo, aActual, 1);
-    const hiLabel = t.over3500 ? 'powyżej 3500 cm³' : (st.drive === 'ice' ? 'powyżej 2000 cm³' : '2001–3500 cm³');
-    box.innerHTML = `
-      <p class="text-sm text-slate-700">${msg}</p>
-      <div class="mt-3 space-y-2 text-sm">
-        <div><div class="flex justify-between"><span>do 2000 cm³ · ${pct(t.lo.rate)}</span><b class="tabular-nums">${zl0(t.aLo)}</b></div><div class="h-2 bg-slate-100 rounded"><div class="h-2 rounded bg-teal-600" style="width:${(t.aLo / max) * 100}%"></div></div></div>
-        <div><div class="flex justify-between"><span>${hiLabel} · ${pct(actual.rate)}</span><b class="tabular-nums">${zl0(aActual)}</b></div><div class="h-2 bg-slate-100 rounded"><div class="h-2 rounded bg-rose-500" style="width:${(aActual / max) * 100}%"></div></div></div>
-      </div>`;
-  }
-  const curId = categoryId(st.drive, st.cc);
-  $('allRates').innerHTML = '<tbody>' + ALL_CATEGORIES.map((c) => {
-    const rule = exciseRule(c.drive, c.cc);
-    return `<tr class="${c.id === curId ? 'cur' : ''}"><td>${esc(c.name)}</td><td class="text-slate-500">${pct(rule.rate)}</td><td class="num">${zl0(roundPLN(res.base * rule.rate))}</td></tr>`;
-  }).join('') + '</tbody>';
-}
-
-/* ------------------------ PDF (pdfmake) ------------------------ */
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = src; s.async = true;
-    s.onload = resolve; s.onerror = () => reject(new Error('Nie udało się wczytać ' + src));
-    document.head.appendChild(s);
-  });
-}
-async function ensurePdfMake() {
-  if (window.pdfMake && window.pdfMake.vfs) return;
-  if (!window.pdfMake) await loadScript(PDFMAKE_SRC);
-  if (!window.pdfMake.vfs) await loadScript(VFS_SRC);
-}
-function pdfTable(rows, widths) {
-  return { table: { widths: widths || ['*', 'auto'], body: rows }, layout: 'lightHorizontalLines', margin: [0, 2, 0, 8] };
-}
-function buildPdf(res) {
-  const st = res.st, R = res.R;
-  const now = new Date();
-  const stamp = now.toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' });
-  const H = (t) => ({ text: t, style: 'h2' });
-  const kv = (k, v, bold) => [{ text: k, color: '#475569' }, { text: v, alignment: 'right', bold: !!bold }];
-
-  const vehicle = [
-    kv('Kierunek importu', st.route === 'eu' ? 'Import z UE (nabycie wewnątrzwspólnotowe)' : (st.clearance === 'pl' ? 'Import spoza UE – odprawa w Polsce' : 'Import spoza UE – odprawa w Niemczech')),
-    kv('Kraj zakupu', st.countryName),
-    kv(st.route === 'noneu' && st.clearance === 'pl' ? 'Data odprawy celnej' : 'Data wjazdu do Polski', fmtDateLong(st.date)),
-    kv('Rodzaj napędu', DRIVE_LABELS[st.drive] + (st.fuel ? ', ' + FUEL_LABELS[st.fuel] : '')),
-  ];
-  if (st.needsEngine) vehicle.push(kv('Pojemność silnika (P.1)', st.cc + ' cm³'));
-  if (st.model) vehicle.push(kv('Marka i model', st.model));
-  if (st.vin) vehicle.push(kv('VIN', st.vin));
-  vehicle.push(kv('Pozycja CN', cnHeading(st.drive, st.fuel, st.cc)));
-
-  const rateRows = [];
-  if (st.currency === 'PLN') rateRows.push(kv('Waluta', 'PLN – bez przeliczenia'));
-  else if (R.source === 'manual') rateRows.push(kv('Kurs wpisany ręcznie', `1 ${st.currency} = ${rate4(R.mid)} zł`, true));
-  else {
-    const d = R.info;
-    rateRows.push(kv(d.kind === 'customs' ? 'Kurs celny (NBP, tabela A)' : 'Kurs średni NBP (tabela A)', `1 ${d.code} = ${rate4(d.mid)} zł`, true));
-    rateRows.push(kv('Tabela', `nr ${d.no} z dnia ${fmtDate(d.effectiveDate)}`));
-    d.trace.forEach((t) => rateRows.push(kv(fmtDateLong(t.date), t.ok ? 'Tabela nr ' + t.no : t.note)));
-    if (d.kind === 'customs') rateRows.push(kv('Podstawa', `przedostatnia środa poprzedniego miesiąca: ${fmtDate(d.customsRef)}`));
-    else rateRows.push(kv('Podstawa prawna', 'art. 104 ust. 12–13 ustawy o podatku akcyzowym'));
-    if (d.provisional) rateRows.push(kv('Uwaga', 'kurs wstępny – tabela z dnia wjazdu nieopublikowana'));
-    if (d.estimated) rateRows.push(kv('Uwaga', 'szacunek – data w przyszłości'));
-  }
-
-  const taxRows = res.rows.map((r) => kv(r.label, r.value, r.strong));
-  taxRows.push(kv('Razem podatki i cło', zl0(res.taxes), true));
-  const costRows = res.costRows.length ? res.costRows.map((c) => kv(c[0], zl(c[1]))) : [kv('Brak', zl(0))];
-  costRows.push(kv('Razem koszty dodatkowe', zl(res.costsTotal), true));
-
-  const content = [
-    { text: 'Kosztorys Celno-Skarbowy Sprowadzenia Pojazdu i Dane do AKC-U/S', style: 'h1' },
-    { text: `Wygenerowano: ${stamp} · stan prawny: ${LEGAL_STATE} · ${CONFIG.brand}`, style: 'muted', margin: [0, 0, 0, 10] },
-    {
-      table: { widths: ['*', '*', '*'], body: [[
-        { stack: [{ text: 'AKCYZA', style: 'boxLbl' }, { text: zl0(res.excise), style: 'boxVal' }, { text: res.rule.label, style: 'boxSub' }], fillColor: '#f0fdfa' },
-        { stack: [{ text: 'PODATKI I CŁO', style: 'boxLbl' }, { text: zl0(res.taxes), style: 'boxVal' }, { text: 'cło + akcyza + VAT', style: 'boxSub' }], fillColor: '#f8fafc' },
-        { stack: [{ text: 'CAŁKOWITY KOSZT', style: 'boxLbl' }, { text: zl0(Math.round(res.total)), style: 'boxVal' }, { text: 'auto + podatki + koszty', style: 'boxSub' }], fillColor: '#f8fafc' },
-      ]] },
-      layout: { hLineColor: '#e2e8f0', vLineColor: '#e2e8f0', paddingTop: () => 8, paddingBottom: () => 8, paddingLeft: () => 8, paddingRight: () => 8 },
-      margin: [0, 0, 0, 12],
-    },
-    H('1. Pojazd i zakup'), pdfTable(vehicle),
-    H('2. Kurs waluty'), pdfTable(rateRows),
-    H('3. Kalkulacja należności'), pdfTable(taxRows),
-    H('4. Rejestracja i formalności w Polsce'), pdfTable(costRows),
-    { table: { widths: ['*', 'auto'], body: [[
-        { text: 'SUMA – auto + podatki + koszty', bold: true, color: '#ffffff', fillColor: '#0f172a', margin: [6, 6, 6, 6] },
-        { text: zl(res.total), bold: true, color: '#ffffff', fillColor: '#0f172a', alignment: 'right', margin: [6, 6, 6, 6] },
-      ]] }, layout: 'noBorders', margin: [0, 4, 0, 12] },
-  ];
-
-  if (res.aksus) {
-    content.push(H('5. Dane do deklaracji AKC-U/S (PUESC)'));
-    content.push(pdfTable(cheatRows(res).map((r) => kv(r[0], r[1]))));
-  } else {
-    content.push(H('5. Odprawa celna w Polsce'));
-    content.push({ text: 'Akcyzę, cło i VAT wykazuje się w zgłoszeniu celnym – deklaracji AKC-U/S nie składasz.', margin: [0, 0, 0, 8] });
-  }
-  if (res.threshold) {
-    const t = res.threshold;
-    content.push(H('6. Porównanie progu 2000 cm³'));
-    content.push(pdfTable([
-      kv(`Do 2000 cm³ (${pct(t.lo.rate)})`, zl0(t.aLo)),
-      kv(`Powyżej 2000 cm³ (${pct(t.hi.rate)})`, zl0(t.aHi)),
-      kv('Różnica (z VAT od akcyzy, jeśli dotyczy)', zl0(t.diff + t.extraVat), true),
-    ]));
-  }
-  const notes = res.warnings.concat(res.notes);
-  if (notes.length) content.push({ ul: notes, style: 'small', margin: [0, 4, 0, 8] });
-  content.push({ text: 'Zastrzeżenie: kosztorys ma charakter informacyjny i nie stanowi doradztwa podatkowego. Kwoty zaokrąglono do pełnych złotych zgodnie z art. 63 § 1 Ordynacji podatkowej. Przed złożeniem deklaracji zweryfikuj dane z dokumentami i aktualnymi przepisami.', style: 'small', color: '#64748b' });
-
-  return {
-    pageSize: 'A4',
-    pageMargins: [40, 50, 40, 45],
-    info: { title: 'Kosztorys Celno-Skarbowy Sprowadzenia Pojazdu i Dane do AKC-U/S', author: CONFIG.brand, subject: 'Akcyza, cło i VAT – kosztorys importu auta' },
-    header: () => ({ text: CONFIG.brand + ' – Kalkulator Akcyzy Samochodowej 2026', margin: [40, 22, 40, 0], fontSize: 8, color: '#94a3b8' }),
-    footer: (page, count) => ({ columns: [{ text: 'Kursy: API NBP (tabela A)', fontSize: 8, color: '#94a3b8' }, { text: `${page} / ${count}`, alignment: 'right', fontSize: 8, color: '#94a3b8' }], margin: [40, 12, 40, 0] }),
-    content,
-    styles: {
-      h1: { fontSize: 15, bold: true, margin: [0, 0, 0, 3], color: '#0f172a' },
-      h2: { fontSize: 11, bold: true, margin: [0, 6, 0, 2], color: '#0f766e' },
-      muted: { fontSize: 8.5, color: '#64748b' },
-      small: { fontSize: 8 },
-      boxLbl: { fontSize: 7.5, bold: true, color: '#475569' },
-      boxVal: { fontSize: 15, bold: true, margin: [0, 2, 0, 1] },
-      boxSub: { fontSize: 7.5, color: '#64748b' },
-    },
-    defaultStyle: { fontSize: 9.5 },
-  };
-}
-async function downloadPdf() {
-  const res = lastResult;
-  const status = $('pdfStatus');
-  if (!res || res.incomplete) { status.textContent = 'Najpierw uzupełnij dane kalkulatora.'; return; }
-  const btn = $('pdfBtn');
-  btn.disabled = true;
-  status.textContent = 'Przygotowuję PDF…';
-  try {
-    await ensurePdfMake();
-    const name = `kosztorys-akcyza-AKC-US-${res.st.date}.pdf`;
-    window.pdfMake.createPdf(buildPdf(res)).download(name);
-    status.textContent = 'Gotowe – plik ' + name + ' został pobrany.';
-  } catch (e) {
-    status.textContent = 'Nie udało się wygenerować PDF: ' + e.message;
-  } finally { btn.disabled = false; }
-}
-
-/* ------------------------ pobieranie kursów ------------------------ */
-let rateTimer = null;
-function scheduleRates() { clearTimeout(rateTimer); rateTimer = setTimeout(refreshRates, 250); }
-async function refreshEur(st) {
-  if (st.route !== 'eu' || st.currency === 'EUR' || !isValidISO(st.date) || rateState.eurKey === st.date) return;
-  try {
-    const eur = await getNbpRate('EUR', st.date);
-    rateState.eur = eur; rateState.eurKey = st.date;
-    recalc();
-  } catch (e) { /* koszt tablic wywozowych pokaże ostrzeżenie */ }
-}
-async function refreshRates(force) {
-  const st = readState();
-  refreshEur(st);
-  if (st.currency === 'PLN' || !isValidISO(st.date)) { rateState.data = null; rateState.key = null; recalc(); return; }
-  const key = rateKey(st);
-  if (!force && rateState.key === key && (rateState.data || rateState.loading)) { recalc(); return; }
-  const token = ++rateState.token;
-  rateState.key = key; rateState.data = null; rateState.error = null; rateState.loading = true;
-  recalc();
-  try {
-    const data = rateKind(st) === 'customs' ? await getCustomsRate(st.currency, st.date) : await getNbpRate(st.currency, st.date);
-    if (token !== rateState.token) return;
-    rateState.data = Object.assign({ kind: 'nbp' }, data);
-  } catch (e) {
-    if (token !== rateState.token) return;
-    rateState.error = e.name === 'AbortError' ? 'Przekroczono czas oczekiwania na odpowiedź.' : (e.message || 'Błąd połączenia.');
-    if (!$('manualRateToggle').checked) { $('manualRateToggle').checked = true; $('manualRateWrap').hidden = false; }
-  } finally {
-    if (token === rateState.token) { rateState.loading = false; recalc(); }
-  }
-}
-
-/* ------------------------ UI ------------------------ */
-function fillCountries(route, keep) {
-  const sel = $('country');
-  const prev = keep ? sel.value : null;
-  sel.innerHTML = COUNTRIES[route].map(([code, name, cur]) => `<option value="${code}" data-cur="${cur}">${name}</option>`).join('');
-  if (prev && COUNTRIES[route].some((c) => c[0] === prev)) sel.value = prev;
-}
-function syncRouteUI() {
-  const st = readState();
-  document.querySelectorAll('[data-show]').forEach((el) => {
-    const v = el.getAttribute('data-show');
-    el.hidden = !(v === st.route);
-  });
-  const lbl = $('dateLabel'), hint = $('dateHint');
-  if (st.route === 'noneu' && st.clearance === 'pl') {
-    lbl.textContent = 'Data odprawy celnej w Polsce (przyjęcia zgłoszenia celnego)';
-    hint.textContent = 'Wartość celną przelicza się po kursie celnym: kurs NBP z przedostatniej środy poprzedniego miesiąca, obowiązujący przez cały miesiąc odprawy.';
-  } else if (st.route === 'noneu') {
-    lbl.textContent = 'Data wjazdu auta do Polski (po odprawie w Niemczech)';
-    hint.textContent = 'Dzień powstania obowiązku podatkowego w akcyzie. Kurs NBP z tego dnia, a w weekend lub święto – ostatni kurs ogłoszony przed tym dniem.';
-  } else {
-    lbl.textContent = 'Data przekroczenia granicy Polski (wjazdu do kraju)';
-    hint.textContent = 'Co do zasady to dzień powstania obowiązku podatkowego. Kurs NBP pobierzemy z tego dnia, a jeśli NBP nie opublikował tabeli (weekend, święto) – z ostatniego dnia publikacji przed nim.';
-  }
-  const engine = st.needsEngine;
-  $('fuelWrap').hidden = !engine;
-  $('ccWrap').hidden = !engine;
-  document.querySelectorAll('[data-cur]').forEach((el) => { if (el.tagName === 'SPAN') el.textContent = st.currency; });
-}
-function syncVinUI() {
-  const v = normVin($('vinCv').value);
-  const s = vinStatus(v);
-  $('vinCounter').textContent = `${v.length}/17`;
-  const info = $('vinInfo');
-  const inp = $('vinCv');
-  inp.setAttribute('aria-invalid', s.state === 'len' || s.state === 'chars' ? 'true' : 'false');
-  if (s.state === 'empty') info.textContent = '– wpisz VIN, aby sprawdzić historię auta.';
-  else if (s.state === 'len') info.textContent = `– VIN musi mieć dokładnie 17 znaków (masz ${v.length}).`;
-  else if (s.state === 'chars') info.textContent = '– VIN zawiera niedozwolone znaki (litery I, O, Q nie występują w VIN).';
-  else info.textContent = `– poprawny format${s.reg ? ' · producent: ' + s.reg.country : ''}${s.checkWarn ? ' · uwaga: cyfra kontrolna (9. znak) się nie zgadza – sprawdź VIN' : ''}.`;
-  $('cvBtn').href = affiliateUrl(s.state === 'ok' ? v : '');
-  // podpowiedź cła na podstawie VIN
-  const hintEl = $('vinDutyHint');
-  if (s.state === 'ok' && s.reg && radio('route') === 'noneu') {
-    hintEl.hidden = false;
-    hintEl.textContent = s.reg.us
-      ? 'VIN wskazuje producenta z USA – sprawdź, czy przysługuje cło 0% (potrzebny dowód pochodzenia).'
-      : `VIN wskazuje producenta: ${s.reg.country}. Cło 0% dla aut z USA tego auta nie obejmuje.`;
-  } else hintEl.hidden = true;
-}
-function renderPrices() {
-  $('cvPrices').innerHTML = CONFIG.affiliate.prices.map((p, i) => `
-    <div class="rounded-lg border ${i === 2 ? 'border-blue-300 bg-blue-50' : 'border-slate-200'} p-2 text-center">
-      <p class="text-[11px] font-bold text-slate-500 uppercase">${esc(p.qty)}</p>
-      <p class="font-extrabold text-slate-900">${esc(p.price)}</p>
-      <p class="text-[11px] text-slate-500">${p.note ? esc(p.note) : '&nbsp;'}</p>
-    </div>`).join('');
-}
-function renderOwner() {
-  document.querySelectorAll('[data-owner]').forEach((el) => { el.textContent = CONFIG.owner[el.getAttribute('data-owner')] || ''; });
-  setText('legalDate', LEGAL_STATE);
-  if (CONFIG.lead.phone) {
-    const b = $('leadPhoneBtn');
-    b.hidden = false;
-    b.href = 'tel:' + CONFIG.lead.phone.replace(/\s/g, '');
-    b.textContent = 'Zadzwoń: ' + CONFIG.lead.phone;
-  }
-}
-function recalc() {
-  const st = readState();
-  renderRateCard(st);
-  renderResults(calculate(st));
-}
-function summaryText(res) {
-  if (!res || res.incomplete) return '';
-  const st = res.st;
-  return [
-    `Kierunek: ${st.route === 'eu' ? 'UE' : 'spoza UE (' + (st.clearance === 'pl' ? 'odprawa PL' : 'odprawa DE') + ')'}, kraj: ${st.countryName}`,
-    `Data: ${fmtDate(st.date)}, cena: ${money(st.price, st.currency)}`,
-    `Napęd: ${DRIVE_LABELS[st.drive]}${st.needsEngine ? ', ' + st.cc + ' cm³' : ''}`,
-    `Akcyza: ${zl0(res.excise)}, podatki razem: ${zl0(res.taxes)}, koszt całkowity: ${zl0(Math.round(res.total))}`,
-    st.vin ? `VIN: ${st.vin}` : '',
-  ].filter(Boolean).join('\n');
-}
-async function submitLead(e) {
-  e.preventDefault();
-  const msg = $('leadMsg');
-  const f = e.target;
-  const name = $('leadName').value.trim(), phone = $('leadPhone').value.trim(), email = $('leadEmail').value.trim();
-  msg.className = 'text-sm text-red-700';
-  if (f.elements._gotcha.value) return;
-  if (!name || phone.replace(/\D/g, '').length < 9) { msg.textContent = 'Podaj imię i numer telefonu (min. 9 cyfr).'; return; }
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = 'Sprawdź adres e-mail.'; return; }
-  if (!$('leadConsent').checked) { msg.textContent = 'Zaznacz zgodę na przetwarzanie danych.'; return; }
-  const payload = {
-    imie: name, telefon: phone, email, miasto: $('leadCity').value.trim(), wiadomosc: $('leadMsgText').value.trim(),
-    kalkulacja: $('leadAttach').checked ? summaryText(lastResult) : '',
-    _subject: 'Zapytanie: rejestracja auta / AKC-U/S',
-  };
-  if (CONFIG.lead.formEndpoint) {
-    msg.className = 'text-sm text-slate-600'; msg.textContent = 'Wysyłam…';
-    try {
-      const r = await fetch(CONFIG.lead.formEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(payload) });
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      msg.className = 'text-sm text-emerald-700 font-semibold';
-      msg.textContent = 'Dziękujemy! Oddzwonimy najszybciej, jak to możliwe.';
-      f.reset(); $('leadCity').value = 'Łódź';
-    } catch (err) {
-      msg.textContent = 'Nie udało się wysłać formularza. Spróbuj ponownie lub zadzwoń.';
-    }
-    return;
-  }
-  if (CONFIG.lead.email) {
-    const body = Object.entries(payload).filter(([k, v]) => v && k !== '_subject').map(([k, v]) => `${k}: ${v}`).join('\n');
-    window.location.href = `mailto:${CONFIG.lead.email}?subject=${encodeURIComponent(payload._subject)}&body=${encodeURIComponent(body)}`;
-    msg.className = 'text-sm text-slate-600';
-    msg.textContent = 'Otworzyliśmy Twój program pocztowy – wyślij przygotowaną wiadomość.';
-    return;
-  }
-  msg.textContent = 'Formularz nie jest jeszcze skonfigurowany. Spróbuj później.';
-}
-async function copyValue(btn) {
-  const v = btn.getAttribute('data-copy');
-  try {
-    await navigator.clipboard.writeText(v);
-  } catch (e) {
-    const ta = document.createElement('textarea');
-    ta.value = v; document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); } catch (e2) { /* brak schowka */ }
-    ta.remove();
-  }
-  const old = btn.textContent;
-  btn.textContent = 'Skopiowano';
-  setTimeout(() => { btn.textContent = old; }, 1200);
-}
-
-function init() {
-  fillCountries('eu');
-  $('date').value = todayWarsaw();
-  $('date').max = addDays(todayWarsaw(), 366);
-  renderPrices();
-  renderOwner();
-  syncRouteUI();
-  syncVinUI();
-
-  document.querySelectorAll('input[name="route"]').forEach((el) => el.addEventListener('change', () => {
-    const route = radio('route');
-    fillCountries(route);
-    const c = $('country').selectedOptions[0];
-    if (c) $('currency').value = c.dataset.cur;
-    syncRouteUI(); syncVinUI(); scheduleRates();
-  }));
-  document.querySelectorAll('input[name="clearance"]').forEach((el) => el.addEventListener('change', () => { syncRouteUI(); scheduleRates(); }));
-  $('country').addEventListener('change', () => {
-    const c = $('country').selectedOptions[0];
-    if (c) $('currency').value = c.dataset.cur;
-    syncRouteUI(); scheduleRates();
-  });
-  $('currency').addEventListener('change', () => { syncRouteUI(); scheduleRates(); });
-  $('date').addEventListener('change', scheduleRates);
-  $('drive').addEventListener('change', () => { syncRouteUI(); recalc(); });
-  $('manualRateToggle').addEventListener('change', () => { $('manualRateWrap').hidden = !$('manualRateToggle').checked; recalc(); });
-  $('calc-form').addEventListener('input', (e) => {
-    if (e.target.id === 'date') return;
-    if (e.target.id === 'vin') { $('vinCv').value = e.target.value; syncVinUI(); }
-    recalc();
-  });
-  $('calc-form').addEventListener('change', (e) => { if (e.target.type === 'checkbox' || e.target.type === 'radio') recalc(); });
-  $('vinCv').addEventListener('input', () => { $('vin').value = $('vinCv').value; syncVinUI(); recalc(); });
-  $('cvBtn').addEventListener('click', (e) => {
-    const v = normVin($('vinCv').value);
-    const s = vinStatus(v);
-    if (s.state === 'len' || s.state === 'chars') {
-      e.preventDefault();
-      $('vinCv').focus();
-      $('vinInfo').textContent = '– popraw VIN (17 znaków, bez liter I, O, Q), aby sprawdzić historię auta.';
-    }
-  });
-  $('pdfBtn').addEventListener('click', downloadPdf);
-  $('leadForm').addEventListener('submit', submitLead);
-  document.addEventListener('click', (e) => {
-    const b = e.target.closest('.copy');
-    if (!b) return;
-    if (b.dataset.action === 'rate-refresh') refreshRates(true);
-    else if (b.hasAttribute('data-copy')) copyValue(b);
-  });
-
-  refreshRates();
-}
-document.addEventListener('DOMContentLoaded', init);
-</script>
 </body>
 </html>

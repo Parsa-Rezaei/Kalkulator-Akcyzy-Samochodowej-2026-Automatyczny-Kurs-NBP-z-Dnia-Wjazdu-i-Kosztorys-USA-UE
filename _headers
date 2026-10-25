@@ -1,0 +1,16 @@
+# Nagłówki bezpieczeństwa – odczytywane automatycznie przez Cloudflare Pages.
+# Zmiana dostawcy formularza wymaga dopisania jego domeny w connect-src i form-action (tutaj i w index.html).
+/*
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.nbp.pl https://formspree.io; form-action 'self' https://formspree.io; base-uri 'none'; frame-ancestors 'none'; manifest-src 'self'; upgrade-insecure-requests
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=()
+  Cross-Origin-Opener-Policy: same-origin
+
+# Pliki techniczne nie powinny trafiać do wyszukiwarki
+/src/*
+  X-Robots-Tag: noindex
+/README.md
+  X-Robots-Tag: noindex
